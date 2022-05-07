@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Arguments -->
+  <node pkg="light_detector" type="light_detector.py" name="light_detector" respawn="false" output="screen"> </node>
+
+</launch>
