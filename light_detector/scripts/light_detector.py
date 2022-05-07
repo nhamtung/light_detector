@@ -16,7 +16,7 @@ while True:
     #use function to identify threshold intensities and locations
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(blur)
     #threshold the blurred frame accordingly
-    hi, threshold = cv2.threshold(blur, maxVal-20, 255, cv2.THRESH_BINARY)
+    hi, threshold = cv2.threshold(blur, maxVal-40, 255, cv2.THRESH_BINARY)
     thr = threshold.copy()
     #resize frame for ease
     cv2.resize(thr, (300,300))
@@ -27,26 +27,31 @@ while True:
     edged = cv2.Canny(threshold, 50, 150)
     lightcontours = cv2.findContours(edged, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     #attempts finding the circle created by the torch illumination on the wall
-    circles = cv2.HoughCircles(threshold, cv2.HOUGH_GRADIENT, 1.0, 10, param1=10, param2=15, minRadius=20, maxRadius=100)
-    # circles = np.uint16(np.around(circles))
+    circles = cv2.HoughCircles(blur, cv2.HOUGH_GRADIENT, 1.0, 100, param1=100, param2=30, minRadius=10, maxRadius=50)
+    if circles is not None:
+        # Convert the circle parameters a, b and r to integers.
+        circles = np.uint16(np.around(circles))
+        for pt in circles[0, :]:
+            a, b, r = pt[0], pt[1], pt[2]
+            # Draw the circumference of the circle.
+            cv2.circle(frame, (a, b), r, (0, 255, 0), 2)
+            cv2.imshow("Detected Circle", frame)
 
-
-
-    #check if the list of contours is greater than 0 and if any circles are detected
+    # check if the list of contours is greater than 0 and if any circles are detected
     # if len(lightcontours)>0:
     #     if circles is not None:
-    #         print("HERE")
     #         #Find the Maxmimum Contour, this is assumed to be the light beam
     #         maxcontour = max(lightcontours, key=cv2.contourArea)
+    #         print(maxcontour)
     #         #avoids random spots of brightness by making sure the contour is reasonably sized
     #         if cv2.contourArea(maxcontour) > 2000:
     #             (x, final_y), radius = cv2.minEnclosingCircle(maxcontour)
     #             cv2.circle(frame, (int(x), int(final_y)), int(radius), (0, 255, 0), 4)
     #             cv2.rectangle(frame, (int(x) - 5, int(final_y) - 5), (int(x) + 5, int(final_y) + 5), (0, 128, 255), -1)
     
-    cv2.imshow('frame', frame)
+    # cv2.imshow('frame', frame)
     cv2.imshow('gray', gray)
-    cv2.imshow('blur', blur)
+    # cv2.imshow('blur', blur)
     cv2.imshow('light', thr)
     cv2.waitKey(4)
     key = cv2.waitKey(5) & 0xFF
