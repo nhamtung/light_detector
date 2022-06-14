@@ -154,7 +154,7 @@ include_directories(
 ## Install ##
 #############
 
-install(DIRECTORY launch/
+install(DIRECTORY launch/light_detector.launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
